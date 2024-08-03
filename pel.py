@@ -17,8 +17,9 @@ torch.set_default_tensor_type(torch.FloatTensor)
 class SelfEnhancementModule(nn.Module):
     def __init__(self, in_channels):
         super(SelfEnhancementModule, self).__init__()
+        self.median_filter = nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=1, groups=in_channels, bias=False)
+        self.median_filter.weight.data.fill_(1.0 / 9.0)  # Initialize as an averaging filter
         self.noise_enhancement = nn.Sequential(
-            nn.Conv2d(in_channels, in_channels, kernel_size=3, padding=1, groups=in_channels),
             nn.Sigmoid(),
             nn.Conv2d(in_channels, in_channels, kernel_size=1)
         )
@@ -31,9 +32,14 @@ class SelfEnhancementModule(nn.Module):
         )
 
     def forward(self, x):
-        noise = self.noise_enhancement(x)
-        ca = self.channel_attention(x)
-        return x + noise * ca
+        # Noise Enhancement
+        noise = x - self.median_filter(x)
+        noise = self.noise_enhancement(noise)
+        enhanced_features = x + noise
+        
+        # Channel Attention
+        ca = self.channel_attention(enhanced_features)
+        return enhanced_features * ca
 
 class MutualEnhancementModule(nn.Module):
     def __init__(self, in_channels):
@@ -70,7 +76,7 @@ def initParams():
     parser.add_argument("--data_path_lfcc", type=str, default='../data/LFCCFeatures/')
     parser.add_argument("--data_protocol", type=str, help="protocol path",
                         default='../data/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
-    parser.add_argument("--out_fold", type=str, help="output folder",default='dual-branch_sum_loss/')
+    parser.add_argument("--out_fold", type=str, help="output folder", default='dual-branch_sum_loss/')
 
     # Dataset prepare
     parser.add_argument("--feat_len", type=int, help="features length", default=750)
@@ -82,7 +88,7 @@ def initParams():
     parser.add_argument('--batch_size', type=int, default=32, help="Mini batch size for training")
     parser.add_argument('--lr', type=float, default=0.0001, help="learning rate")
 
-    parser.add_argument('--beta_1', type=float, default=0.9, help="bata_1 for Adam")
+    parser.add_argument('--beta_1', type=float, default=0.9, help="beta_1 for Adam")
     parser.add_argument('--beta_2', type=float, default=0.999, help="beta_2 for Adam")
     parser.add_argument('--eps', type=float, default=1e-8, help="epsilon for Adam")
     parser.add_argument("--gpu", type=str, help="GPU index", default="0")
@@ -115,16 +121,16 @@ def initParams():
     args.device = torch.device("cuda" if args.cuda else "cpu")
     return args
 
-def getFakeFeature(feature,label):
+def getFakeFeature(feature, label):
     f = []
     l = []
-    for i in range(0,label.shape[0]):
-        if label[i]!=20:
+    for i in range(0, label.shape[0]):
+        if label[i] != 20:
             l.append(label[i])
             f.append(feature[i])
     f = torch.stack(f)
     l = torch.stack(l)
-    return f,l
+    return f, l
 
 def train(args):
     torch.set_default_tensor_type(torch.FloatTensor)
@@ -143,7 +149,7 @@ def train(args):
     trainset = ASVspoof2019(data_path_lfcc=args.data_path_lfcc, data_path_cqt=args.data_path_cqt, data_protocol=args.data_protocol,
                             access_type=args.access_type, data_part='train', feat_length=args.feat_len, padding=args.padding)
     validationset = ASVspoof2019(data_path_lfcc=args.data_path_lfcc, data_path_cqt=args.data_path_cqt, data_protocol='../data/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt',
-                            access_type=args.access_type, data_part='dev', feat_length=args.feat_len, padding=args.padding)
+                                 access_type=args.access_type, data_part='dev', feat_length=args.feat_len, padding=args.padding)
     trainDataLoader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=trainset.collate_fn)
     valDataLoader = DataLoader(validationset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=validationset.collate_fn)
 
