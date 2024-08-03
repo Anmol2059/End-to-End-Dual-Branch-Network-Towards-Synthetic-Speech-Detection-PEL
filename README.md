@@ -1,3 +1,9 @@
+# Implementation of End-to-End Dual-Branch Network for Synthetic Speech Detection
+
+This project integrates the Progressive Enhancement Learning (PEL) framework from the paper [Exploiting Fine-grained Face Forgery Clues via Progressive Enhancement Learning](https://arxiv.org/abs/2112.13977) into a synthetic speech detection system. By using LFCC and CQT as features, we enhance the detection of subtle forgery clues in synthetic speech. The implementation includes self-enhancement and mutual-enhancement modules to progressively refine feature learning, inspired by the techniques used in the PEL framework for face forgery detection.
+
+***
+
 # End-to-End Dual-Branch Network Towards Synthetic Speech Detection  
 
 ### Prerequisites
