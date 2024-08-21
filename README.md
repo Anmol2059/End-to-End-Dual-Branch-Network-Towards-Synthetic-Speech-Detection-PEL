@@ -1,9 +1,25 @@
-# Implementation of End-to-End Dual-Branch Network for Synthetic Speech Detection
-
-This project integrates the Progressive Enhancement Learning (PEL) framework from the paper [Exploiting Fine-grained Face Forgery Clues via Progressive Enhancement Learning](https://arxiv.org/abs/2112.13977) into a synthetic speech detection system. By using LFCC and CQT as features, we enhance the detection of subtle forgery clues in synthetic speech. The implementation includes self-enhancement and mutual-enhancement modules to progressively refine feature learning, inspired by the techniques used in the PEL framework for face forgery detection.
+This forked project integrates the Progressive Enhancement Learning (PEL) framework from the paper [Exploiting Fine-grained Face Forgery Clues via Progressive Enhancement Learning](https://arxiv.org/abs/2112.13977) into a synthetic speech detection system. By using LFCC and CQT as features, we enhance the detection of subtle forgery clues in synthetic speech. The implementation includes self-enhancement and mutual-enhancement modules to progressively refine feature learning, inspired by the techniques used in the PEL framework for face forgery detection.
 
 ***
+---
+# Implementation of Progressive Enhancement Learning for Audio Deepfake Detection
 
+This repository contains an implementation of Progressive Enhancement Learning applied to the detection of audio deepfakes.
+
+## Directory Structure
+
+- **Progressive_Enhancement_Learning/**: This directory houses the primary scripts for this project.
+
+    - `demo1.py`: The original implementation of the [makaijie/End-to-End-Dual-Branch-Network-Towards-Synthetic-Speech-Detection](https://github.com/makaijie/End-to-End-Dual-Branch-Network-Towards-Synthetic-Speech-Detection) repository.
+
+    - `demo2.py`: An implementation incorporating Self and Mutual Enhancement based on the [paper](https://arxiv.org/pdf/2112.13977).
+
+## Current Status
+
+- The code has been tested on single audio samples.
+- The full training pipeline will be updated soon.
+
+---
 # End-to-End Dual-Branch Network Towards Synthetic Speech Detection  
 
 ### Prerequisites
