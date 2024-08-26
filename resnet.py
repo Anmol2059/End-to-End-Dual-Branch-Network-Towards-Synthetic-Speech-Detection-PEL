@@ -167,11 +167,8 @@ class ResNet(nn.Module):
         self.conv5 = nn.Conv2d(512 * block.expansion, 256, kernel_size=(num_nodes, 3), stride=(1, 1), padding=(0, 1),
                                bias=False)
         self.bn5 = nn.BatchNorm2d(256)
-        self.fc = nn.Linear(256 * 2, enc_dim)
-        self.fc_mu = nn.Linear(enc_dim, nclasses) if nclasses >= 2 else nn.Linear(enc_dim, 1)
 
         self.initialize_params()
-        self.attention = SelfAttention(256)
 
     def initialize_params(self):
         for layer in self.modules():
@@ -208,11 +205,7 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         x = self.conv5(x)
         x = self.activation(self.bn5(x)).squeeze(2)
-        stats = self.attention(x.permute(0, 2, 1).contiguous())
-        feat = self.fc(stats)
-        mu = self.fc_mu(feat)
-
-        return feat, mu
+        return x
 
 
 
