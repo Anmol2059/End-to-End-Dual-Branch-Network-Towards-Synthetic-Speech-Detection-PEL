@@ -18,10 +18,10 @@ def initParams():
     parser = argparse.ArgumentParser(description=__doc__)
     # Data folder prepare
     parser.add_argument("--access_type", type=str, default='LA')
-    parser.add_argument("--data_path_cqt", type=str, default='../data/CQTFeatures/')
-    parser.add_argument("--data_path_lfcc", type=str, default='../data/LFCCFeatures/')
+    parser.add_argument("--data_path_cqt", type=str, default='data/CQTFeatures/')
+    parser.add_argument("--data_path_lfcc", type=str, default='data/LFCCFeatures/')
     parser.add_argument("--data_protocol", type=str, help="protocol path",
-                        default='../data/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
+                        default='LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
     parser.add_argument("--out_fold", type=str, help="output folder",default='dual-branch_alternative_loss/')
 
     # Dataset prepare
@@ -96,7 +96,7 @@ def train(args):
 
     trainset = ASVspoof2019(data_path_lfcc=args.data_path_lfcc,data_path_cqt=args.data_path_cqt,data_protocol=args.data_protocol,
                             access_type=args.access_type,data_part='train',feat_length=args.feat_len,padding=args.padding)
-    validationset = ASVspoof2019(data_path_lfcc=args.data_path_lfcc,data_path_cqt=args.data_path_cqt,data_protocol='../data/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt',
+    validationset = ASVspoof2019(data_path_lfcc=args.data_path_lfcc,data_path_cqt=args.data_path_cqt,data_protocol='LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt',
                             access_type=args.access_type,data_part='dev',feat_length=args.feat_len,padding=args.padding)
     trainDataLoader = DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,collate_fn=trainset.collate_fn)
     valDataLoader = DataLoader(validationset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,collate_fn=validationset.collate_fn)
@@ -234,8 +234,8 @@ def train(args):
                           'val_eer:' + str(val_eer) + '\t' +
                           '\n')
 
-        torch.save(resnet_lfcc, os.path.join(args.out_fold, 'checkpoint','anti-spoofing_lfcc_model_%d.pt' % (epoch_num + 1)))
-        torch.save(resnet_cqt, os.path.join(args.out_fold, 'checkpoint','anti-spoofing_cqt_model_%d.pt' % (epoch_num + 1)))
+        torch.save(resnet_lfcc, os.path.join(args.out_fold, 'checkpoint', 'anti-spoofing_lfcc_model_%d.pt' % (epoch_num + 1)))
+        torch.save(resnet_cqt, os.path.join(args.out_fold, 'checkpoint', 'anti-spoofing_cqt_model_%d.pt' % (epoch_num + 1)))
 
     return resnet_lfcc
 
